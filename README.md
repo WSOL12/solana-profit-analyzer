@@ -1,41 +1,48 @@
-# Solana Dex Arbitrage Bot
+# Solana DEX Arbitrage Bot
 
-To run this bot, you'll need a Solana RPC node and a self-hosted Jupiter v6 node.
+This project implements core logic for analyzing price differences between decentralized exchanges (DEXs) on Solana.
+It focuses on evaluating routing outputs, comparing token conversion paths, and inspecting potential discrepancies between swap quotes.
 
-> Note: This bot is not fully developed, lacks program implementation, and is limited to a WSOL/USDC trading pair. However, the basic logic is fully implemented.
+## Overview
 
-## Steps
+The system includes the following components:
 
-1. Select Trading Pairs
+* Token pair selection and configuration
+* Integration with a routing engine capable of generating swap paths
+* Support for circular route analysis
+* Comparison of quote outputs for selected markets
+* Basic modeling for multi-hop and alternative routing paths
 
-2. Run The Jupiter v6 Node
+The project currently focuses on the **WSOL/USDC** pair and includes preliminary logic for route evaluation.
 
-enable `--allow-circular-arbitrage`
+## Architecture
 
-```
-./jupiter-swap-api --rpc-url https://mainnet-ams.chainbuff.com --yellowstone-grpc-endpoint https://grpc-ams.chainbuff.com --allow-circular-arbitrage --market-mode remote --filter-markets-with-mints So11111111111111111111111111111111111111112,EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-```
+### Routing Engine Interface
 
-3. Run the Bot
+Retrieves path candidates and associated quote data from an external routing engine.
+Includes support for filtering by token mints and enabling circular route generation.
 
-```
-npx esrun src/index.ts
-```
+### Quote Comparison
 
-```
-sent to frankfurt, bundle id: 429a763afe889b5c5694dc5405063506b7e463a6b0fe339d89a0b0991868edd2
-So11111111111111111111111111111111111111112 - EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-slot: 302063575, total duration: 85ms
-diffLamports: 16189
-```
+Analyzes differences between multiple routing options by comparing:
 
-## Profit Guarantee
+* Expected input/output amounts
+* Route composition
+* Path structure
+* Resulting deltas between alternative routes
 
-The bot requires a program to ensure profitability. Without it, even if the slippage is set to 0 and the Jito bundle service is used, you may still incur losses due to the Jito tip. [See the example](https://solscan.io/tx/3DoYWBvnE826cqKM6pkFQvLzZ9qhzGrFFjaxbj6LahGcm1M9HicchAwibkBV5ZGb2gtymWSHPWM7owvBuYPDv3UR):
+### Logging
 
-![](./img/tx-example.png)
+Outputs structured information for inspection, including slot data, timing metrics, and quote deltas.
 
-# References
+## Notes
 
-- https://station.jup.ag/docs/apis/self-hosted
-- https://docs.jito.wtf
+* Program logic is still under development.
+* Certain components (such as on-chain execution modules) are not implemented.
+* Current implementation is limited to a single token pair and routing mode.
+
+## References
+
+* [https://station.jup.ag/docs/apis/self-hosted](https://station.jup.ag/docs/apis/self-hosted)
+* [https://spl.solana.com/token](https://spl.solana.com/token)
+
